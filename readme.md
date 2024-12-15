@@ -1,1 +1,3 @@
-boom
+"""
+Python pygame education project.
+"""
