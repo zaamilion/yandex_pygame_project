@@ -12,7 +12,7 @@ class Game:
         pygame.display.set_caption("CLash of Drons")
         self.screen = pygame.display.set_mode(SIZE)
         self.clock = pygame.time.Clock()
-        self.current_scene = VillageScene(self.screen)
+        self.current_scene = PlayScene(self.screen)
 
     def event(self, event):
         if event.type == pygame.QUIT:

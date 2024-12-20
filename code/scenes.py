@@ -12,10 +12,11 @@ class Scene:
         pass
 
 
-class VillageScene(Scene):
+class PlayScene(Scene):
     def __init__(self, screen):
         self.screen = screen
         self.board = Board(10, 10)
+        self.figures = []
 
     def render(self):
         self.board.render(self.screen)
@@ -23,6 +24,39 @@ class VillageScene(Scene):
     def event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.board.get_click(event.pos)
+            for figure in self.figures:
+                if figure:
+                    figure.get_click(event.pos)
+        if event.type == pygame.MOUSEMOTION:
+            for figure in self.figures:
+                if figure:
+                    figure.motion(event.pos)
+
+
+class Figure:
+    def __init__(self, figure: str, color: tuple, pos: tuple):
+        self.figure = figure
+        self.color = color
+        self.x, self.y = pos
+        self.size = 20
+        self.selecting = False
+
+    def render(self):
+        pass
+
+    def motion(self, pos):
+        if self.selecting:
+            self.x, self.y = pos
+
+    def get_click(self, pos: tuple):
+        x, y = pos
+        if (
+            not (self.selecting)
+            and self.x <= x <= self.x + self.size
+            and self.y <= y <= self.y + self.size
+        ):
+            self.selecting = True
+            self.size = 40
 
 
 class Board:
