@@ -1,4 +1,7 @@
 import pygame
+from globals import COLORS, FIGURES_COLORS
+from boards import Board, FakeBoard
+from figures import Figures, Figure
 
 
 class Scene:
@@ -15,106 +18,76 @@ class Scene:
 class PlayScene(Scene):
     def __init__(self, screen):
         self.screen = screen
+        self.score = 0
         self.board = Board(10, 10)
-        self.figures = []
+        self.fake_board = FakeBoard(10, 10)
+        self.figures = Figures()
 
     def render(self):
         self.board.render(self.screen)
+        self.fake_board.render(self.screen)
+        self.figures.render(self.screen)
 
     def event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            self.board.get_click(event.pos)
-            for figure in self.figures:
-                if figure:
-                    figure.get_click(event.pos)
+            self.figures.get_click(event.pos)
+
         if event.type == pygame.MOUSEMOTION:
-            for figure in self.figures:
-                if figure:
-                    figure.motion(event.pos)
+            self.figures.motion(event.pos)
+            self.fake_board.clear()
 
+            figure = self.figures.get_selectabled()
 
-class Figure:
-    def __init__(self, figure: str, color: tuple, pos: tuple):
-        self.figure = figure
-        self.color = color
-        self.x, self.y = pos
-        self.size = 20
-        self.selecting = False
+            if not figure:
+                return
 
-    def render(self):
-        pass
+            cell = self.board.get_click((figure.x, figure.y))
 
-    def motion(self, pos):
-        if self.selecting:
-            self.x, self.y = pos
+            if cell:
+                for row in range(figure.h):
+                    for col in range(figure.w):
+                        board_cell = self.board.get_cell((cell[0] + col, cell[1] + row))
+                        if (
+                            figure.figure[row][col] == 1
+                            and board_cell is None
+                            or board_cell
+                        ):
+                            return
+                for row in range(figure.h):
+                    for col in range(figure.w):
+                        if figure.figure[row][col] == 1:
+                            self.fake_board.set_cell(
+                                (cell[0] + col, cell[1] + row),
+                                COLORS.index(figure.color),
+                            )
 
-    def get_click(self, pos: tuple):
-        x, y = pos
-        if (
-            not (self.selecting)
-            and self.x <= x <= self.x + self.size
-            and self.y <= y <= self.y + self.size
-        ):
-            self.selecting = True
-            self.size = 40
+        if event.type == pygame.MOUSEBUTTONUP:
+            figure = self.figures.get_selectabled()
+            if not figure:
+                return
+            cell = self.board.get_click((figure.x, figure.y))
+            if cell:
+                for row in range(figure.h):
+                    for col in range(figure.w):
+                        board_cell = self.board.get_cell((cell[0] + col, cell[1] + row))
+                        if (
+                            figure.figure[row][col] == 1
+                            and board_cell is None
+                            or board_cell
+                        ):
+                            self.figures.return_to_start_pos()
+                            return
+                for row in range(figure.h):
+                    for col in range(figure.w):
+                        if figure.figure[row][col] == 1:
+                            self.board.set_cell(
+                                (cell[0] + col, cell[1] + row),
+                                COLORS.index(figure.color),
+                            )
+                self.figures.figures.remove(figure)
+                self.fake_board.clear()
+                if not self.figures.figures:
+                    self.figures = Figures()
 
-
-class Board:
-    # создание поля
-    def __init__(self, width, height):
-        self.height = height
-        self.width = width
-        self.board = [[0] * width for _ in range(height)]
-        # значения по умолчанию
-        self.left = 200
-        self.top = 20
-        self.cell_size = 30
-
-    # настройка внешнего вида
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
-
-    def get_cell(self, mouse_pos: tuple):
-        x, y = mouse_pos
-        h = (x - self.left) // self.cell_size
-        w = (y - self.top) // self.cell_size
-        if 0 <= w < self.width and 0 <= h < self.height:
-            return h, w
-        return
-
-    def on_click(self, cell_pos: tuple):
-        if cell_pos:
-            x, y = cell_pos
-            self.board[x][y] = 1 - self.board[x][y]
-
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
-
-    def render(self, screen):
-        for row in range(self.height):
-            for col in range(self.width):
-                color = pygame.Color("Black" if self.board[row][col] == 1 else "White")
-                pygame.draw.rect(
-                    screen,
-                    color,
-                    (
-                        self.left + row * self.cell_size,
-                        self.top + col * self.cell_size,
-                        self.cell_size,
-                        self.cell_size,
-                    ),
-                )
-                pygame.draw.rect(
-                    screen,
-                    pygame.Color("Grey"),
-                    (
-                        self.left + row * self.cell_size,
-                        self.top + col * self.cell_size,
-                        self.cell_size,
-                        self.cell_size,
-                    ),
-                    1,
-                )
+            else:
+                self.figures.return_to_start_pos()

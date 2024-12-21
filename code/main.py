@@ -9,10 +9,11 @@ SIZE = WIDTH, HEIGHT = 800, 600
 class Game:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("CLash of Drons")
+        pygame.display.set_caption("Block Blast")
         self.screen = pygame.display.set_mode(SIZE)
+        self.surf = pygame.Surface(SIZE, pygame.SRCALPHA)
         self.clock = pygame.time.Clock()
-        self.current_scene = PlayScene(self.screen)
+        self.current_scene = PlayScene(self.surf)
 
     def event(self, event):
         if event.type == pygame.QUIT:
@@ -22,7 +23,9 @@ class Game:
 
     def render(self):
         self.screen.fill((255, 255, 255))
+        self.surf.fill((255, 255, 255))
         self.current_scene.render()
+        self.screen.blit(self.surf, (0, 0))
         pygame.display.flip()
 
 
