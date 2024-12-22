@@ -22,8 +22,7 @@ class Game:
             self.current_scene.event(event)
 
     def render(self):
-        self.screen.fill((255, 255, 255))
-        self.surf.fill((255, 255, 255))
+        self.surf.fill((159, 79, 255))
         self.current_scene.render()
         self.screen.blit(self.surf, (0, 0))
         pygame.display.flip()

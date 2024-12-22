@@ -47,10 +47,8 @@ class PlayScene(Scene):
                 for row in range(figure.h):
                     for col in range(figure.w):
                         board_cell = self.board.get_cell((cell[0] + col, cell[1] + row))
-                        if (
-                            figure.figure[row][col] == 1
-                            and board_cell is None
-                            or board_cell
+                        if figure.figure[row][col] == 1 and (
+                            board_cell is None or board_cell
                         ):
                             return
                 for row in range(figure.h):
@@ -70,10 +68,8 @@ class PlayScene(Scene):
                 for row in range(figure.h):
                     for col in range(figure.w):
                         board_cell = self.board.get_cell((cell[0] + col, cell[1] + row))
-                        if (
-                            figure.figure[row][col] == 1
-                            and board_cell is None
-                            or board_cell
+                        if figure.figure[row][col] == 1 and (
+                            board_cell is None or board_cell
                         ):
                             self.figures.return_to_start_pos()
                             return
@@ -84,6 +80,7 @@ class PlayScene(Scene):
                                 (cell[0] + col, cell[1] + row),
                                 COLORS.index(figure.color),
                             )
+                            print(self.board.check_row_col(cell))
                 self.figures.figures.remove(figure)
                 self.fake_board.clear()
                 if not self.figures.figures:

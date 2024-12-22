@@ -5,9 +5,10 @@ import random
 
 class Figures:
     def __init__(self):
-        self.figures = [random.choice(FIGURES) for _ in range(3)]
+        self.figures = [Figure(random.choice(FIGURES)) for _ in range(3)]
         x, y = 500, 100
         for figure in self.figures:
+
             figure.set_color(random.choice(FIGURES_COLORS))
             figure.set_pos((x, y))
             y += 150
@@ -119,14 +120,14 @@ class Figure:
 
 
 FIGURES = [
-    Figure([[1, 1, 1], [1, 1, 1], [1, 1, 1]]),
-    Figure([[0, 1], [1, 1], [1, 0]]),
-    Figure([[1, 1, 1, 1]]),
-    Figure([[0, 0, 1], [0, 0, 1], [1, 1, 1]]),
-    Figure([[1, 1, 1], [1, 0, 0], [1, 0, 0]]),
-    Figure([[1, 1], [1, 1]]),
-    Figure([[1, 0, 0], [1, 1, 1]]),
-    Figure([[1], [1], [1], [1]]),
-    Figure([[1, 1, 1], [0, 0, 1], [0, 0, 1]]),
-    Figure([[1, 0], [1, 1], [1, 0]]),
+    [[1, 1, 1], [1, 1, 1], [1, 1, 1]],
+    [[0, 1], [1, 1], [1, 0]],
+    [[1, 1, 1, 1]],
+    [[0, 0, 1], [0, 0, 1], [1, 1, 1]],
+    [[1, 1, 1], [1, 0, 0], [1, 0, 0]],
+    [[1, 1], [1, 1]],
+    [[1, 0, 0], [1, 1, 1]],
+    [[1], [1], [1], [1]],
+    [[1, 1, 1], [0, 0, 1], [0, 0, 1]],
+    [[1, 0], [1, 1], [1, 0]],
 ]

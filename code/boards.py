@@ -52,7 +52,7 @@ class Board:
                 )
                 pygame.draw.rect(
                     screen,
-                    pygame.Color("Grey"),
+                    (0, 0, 20),
                     (
                         self.left + row * self.cell_size,
                         self.top + col * self.cell_size,
@@ -61,6 +61,26 @@ class Board:
                     ),
                     1,
                 )
+
+    def check_row_col(self, cell: tuple) -> bool:
+        for x in range(0, self.width):
+            if self.board[cell[0]][x] == 0:
+                print(cell[0], x)
+                return False
+        self.break_row(cell[0])
+        for y in range(0, self.height):
+            if self.board[y][cell[1]] == 0:
+                return False
+        self.break_col(cell[1])
+        return True
+
+    def break_row(self, row):
+        for x in range(0, self.width):
+            self.board[row][x] = 0
+
+    def break_col(self, col):
+        for y in range(0, self.height):
+            self.board[y][col] = 0
 
 
 class FakeBoard(Board):
