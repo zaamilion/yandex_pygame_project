@@ -69,26 +69,26 @@ class PlayScene(Scene):
                 return
             cell = self.board.get_click((figure.x, figure.y))
             if cell:
-                for row in range(figure.h):
-                    for col in range(figure.w):
-                        board_cell = self.board.get_cell((cell[0] + col, cell[1] + row))
-                        if figure.figure[row][col] == 1 and (
-                            board_cell is None or board_cell
-                        ):
-                            self.figures.return_to_start_pos()
-                            return
-                for row in range(figure.h):
-                    for col in range(figure.w):
-                        if figure.figure[row][col] == 1:
-                            self.board.set_cell(
-                                (cell[0] + col, cell[1] + row),
-                                COLORS.index(figure.color),
-                            )
-                            self.board.check_row_col((cell[0] + col, cell[1] + row))
-                self.figures.figures.remove(figure)
-                self.fake_board.clear()
-                if not self.figures.figures:
-                    self.figures = Figures()
-
+                self.set_figure(cell, figure)
             else:
                 self.figures.return_to_start_pos()
+
+    def set_figure(self, cell, figure):
+        for row in range(figure.h):
+            for col in range(figure.w):
+                board_cell = self.board.get_cell((cell[0] + col, cell[1] + row))
+                if figure.figure[row][col] == 1 and (board_cell is None or board_cell):
+                    self.figures.return_to_start_pos()
+                    return
+            for row in range(figure.h):
+                for col in range(figure.w):
+                    if figure.figure[row][col] == 1:
+                        self.board.set_cell(
+                            (cell[0] + col, cell[1] + row),
+                            COLORS.index(figure.color),
+                        )
+                        self.board.check_row_col((cell[0] + col, cell[1] + row))
+            self.figures.figures.remove(figure)
+            self.fake_board.clear()
+            if not self.figures.figures:
+                self.figures = Figures()
