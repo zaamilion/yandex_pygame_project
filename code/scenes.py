@@ -2,6 +2,7 @@ import pygame
 from globals import COLORS, FIGURES_COLORS
 from boards import Board, FakeBoard
 from figures import Figures, Figure
+import animations
 
 
 class Scene:
@@ -22,11 +23,14 @@ class PlayScene(Scene):
         self.board = Board(10, 10)
         self.fake_board = FakeBoard(10, 10)
         self.figures = Figures()
+        self.animation = animations.Start(self.board)
 
     def render(self):
         self.board.render(self.screen)
         self.fake_board.render(self.screen)
         self.figures.render(self.screen)
+        if self.animation.running:
+            self.animation.render(self.screen)
 
     def event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -80,7 +84,7 @@ class PlayScene(Scene):
                                 (cell[0] + col, cell[1] + row),
                                 COLORS.index(figure.color),
                             )
-                            print(self.board.check_row_col(cell))
+                            self.board.check_row_col((cell[0] + col, cell[1] + row))
                 self.figures.figures.remove(figure)
                 self.fake_board.clear()
                 if not self.figures.figures:

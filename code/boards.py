@@ -62,12 +62,18 @@ class Board:
                     1,
                 )
 
-    def check_row_col(self, cell: tuple) -> bool:
+    def check_row_col(self, cell):
+        res = self.check_row(cell) or self.check_col(cell)
+        return res
+
+    def check_row(self, cell: tuple) -> bool:
         for x in range(0, self.width):
             if self.board[cell[0]][x] == 0:
-                print(cell[0], x)
                 return False
         self.break_row(cell[0])
+        return True
+
+    def check_col(self, cell: tuple):
         for y in range(0, self.height):
             if self.board[y][cell[1]] == 0:
                 return False
