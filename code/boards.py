@@ -80,6 +80,30 @@ class Board:
         self.break_col(cell[1])
         return True
 
+    def check_board_set_figure(self, figure: list) -> bool:
+        for row in range(self.height):
+            for col in range(self.width):
+                res = self.check_cell_set_figure(
+                    (
+                        row,
+                        col,
+                    ),
+                    figure,
+                )
+                if res is True:
+                    return True
+        return False
+
+    def check_cell_set_figure(self, cell: tuple, figure: list) -> bool:
+        for y in range(len(figure)):
+            for x in range(len(figure[0])):
+                if 0 <= cell[0] + y < self.height and 0 <= cell[1] + x < self.width:
+                    if figure[y][x] == 1 and self.board[cell[0] + y][cell[1] + x] == 0:
+                        return False
+                else:
+                    return False
+        return True
+
     def break_row(self, row):
         for x in range(0, self.width):
             self.board[row][x] = 0
