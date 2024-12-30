@@ -1,13 +1,13 @@
 import pygame
 from globals import COLORS
-
+import random
 
 class Board:
     # создание поля
     def __init__(self, width, height):
         self.height = height
         self.width = width
-        self.board = [[0] * width for _ in range(height)]
+        self.board = [[random.randint(0,1)] * width for _ in range(height)]
         # значения по умолчанию
         self.left = 20
         self.top = 100
@@ -98,7 +98,7 @@ class Board:
         for y in range(len(figure)):
             for x in range(len(figure[0])):
                 if 0 <= cell[0] + y < self.height and 0 <= cell[1] + x < self.width:
-                    if figure[y][x] == 1 and self.board[cell[0] + y][cell[1] + x] == 0:
+                    if figure[y][x] == 1 and self.board[cell[0] + y][cell[1] + x] != 0:
                         return False
                 else:
                     return False
