@@ -1,13 +1,13 @@
 import pygame
 from globals import COLORS
 import random
-
+from copy import deepcopy
 class Board:
     # создание поля
     def __init__(self, width, height):
         self.height = height
         self.width = width
-        self.board = random.choice(BOARDS)
+        self.board = deepcopy(random.choice(BOARDS))
         # self.board = [[0] * width for _ in range(height)]
         # значения по умолчанию
         self.left = 20
@@ -132,7 +132,8 @@ class FakeBoard(Board):
             for col in range(self.width):
                 color = COLORS[self.board[row][col]]
                 color = list(color)
-                color[-1] = 100
+                color = tuple([i + 50 if i <= 200 else i - 20 for i in color])
+                stroke_color = (50,50,50)
                 if self.board[row][col] != 0:
                     pygame.draw.rect(
                         screen,
@@ -143,6 +144,17 @@ class FakeBoard(Board):
                             self.cell_size,
                             self.cell_size,
                         ),
+                    )
+                    pygame.draw.rect(
+                        screen,
+                        stroke_color,
+                        (
+                            self.left + row * self.cell_size,
+                            self.top + col * self.cell_size,
+                            self.cell_size,
+                            self.cell_size,
+                        ),
+                        1
                     )
 
 

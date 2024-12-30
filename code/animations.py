@@ -11,7 +11,7 @@ class Start:
         self.game_board = deepcopy(board.board)
         self.board = Board(board.width, board.height)
         self.board.board = deepcopy(board.board)
-        self.start_time = pygame.time.get_ticks()
+        self.start_time = pygame.time.get_ticks() + 50
         self.level = 1
 
     def render(self, screen):

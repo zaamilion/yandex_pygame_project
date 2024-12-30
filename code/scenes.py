@@ -5,6 +5,7 @@ from figures import Figures, Figure
 import animations
 from score import Score
 from copy import deepcopy
+from buttons import PlayButton
 class Scene:
     def __init__(self, screen):
         self.screen = screen
@@ -16,8 +17,26 @@ class Scene:
         pass
 
 
+class MenuScene(Scene):
+    def __init__(self, game, screen):
+        self.game = game
+        self.screen = screen
+        self.font = pygame.font.SysFont('Comic Sans MS', 30)
+        self.buttons = pygame.sprite.Group()
+
+        self.play_button = PlayButton(self, self.buttons, 50, 20, (100,100), text='Play', button_color=(100,200,255, 100), border_radius=5)
+
+    def event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.play_button.get_click(event.pos)
+    
+    def render(self):
+        self.buttons.draw(self.screen)
+
 class PlayScene(Scene):
-    def __init__(self, screen):
+    def __init__(self, game,screen):
+        self.game = game
         self.screen = screen
         self.sprites = pygame.sprite.Group()
         self.score = Score()
@@ -25,7 +44,7 @@ class PlayScene(Scene):
         self.board = Board(8, 8)
         self.fake_board = FakeBoard(8, 8)
         self.figures = Figures()
-        self.animation = animations.Start(self.board)
+        self.animation = None
 
     def render(self):
         self.board.render(self.screen)
@@ -35,7 +54,7 @@ class PlayScene(Scene):
         if self.animation:
             self.animation = self.animation.render(self.screen)
             if self.death and not self.animation:
-                pygame.quit()
+                self.game.end_game()
         if self.death and not self.animation:
             self.animation = animations.Start(self.board)
 
@@ -46,6 +65,11 @@ class PlayScene(Scene):
             if click:
                 self.board.set_cell(click, 2)
                 print(self.board.board)'''
+        
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.game.go_menu()
+                return
 
         elif event.type == pygame.MOUSEMOTION:
             self.figures.motion(event.pos)
@@ -89,7 +113,7 @@ class PlayScene(Scene):
                             for x in range(self.board.width):
                                 if test_board.get_cell((cell[0] + col, x)) != 0 and self.board.get_cell((cell[0] + col, x)) != 0:
                                     self.board.set_cell((cell[0] + col, x), COLORS.index(figure.color))
-                                    
+
 
 
         elif event.type == pygame.MOUSEBUTTONUP:
