@@ -4,7 +4,7 @@ from boards import Board, FakeBoard
 from figures import Figures, Figure
 import animations
 from score import Score
-
+from copy import deepcopy
 class Scene:
     def __init__(self, screen):
         self.screen = screen
@@ -66,6 +66,8 @@ class PlayScene(Scene):
                             board_cell is None or board_cell
                         ):
                             return
+                test_board = Board(8,8)
+                test_board.board = deepcopy(self.board.board)
                 for row in range(figure.h):
                     for col in range(figure.w):
                         if figure.figure[row][col] == 1:
@@ -73,6 +75,22 @@ class PlayScene(Scene):
                                 (cell[0] + col, cell[1] + row),
                                 COLORS.index(figure.color),
                             )
+                            test_board.set_cell(
+                                (cell[0] + col, cell[1] + row),
+                                COLORS.index(figure.color),
+                            )
+                for row in range(figure.h):
+                    for col in range(figure.w):
+                        if test_board.check_col((cell[0] + col, cell[1] + row)):
+                            for y in range(self.board.height):
+                                if test_board.get_cell((y, cell[1] + row)) != 0 and self.board.get_cell((y, cell[1] + row)) != 0:
+                                    self.board.set_cell((y, cell[1] + row), COLORS.index(figure.color))
+                        if test_board.check_row((cell[0] + col, cell[1] + row)):
+                            for x in range(self.board.width):
+                                if test_board.get_cell((cell[0] + col, x)) != 0 and self.board.get_cell((cell[0] + col, x)) != 0:
+                                    self.board.set_cell((cell[0] + col, x), COLORS.index(figure.color))
+                                    
+
 
         elif event.type == pygame.MOUSEBUTTONUP:
             figure = self.figures.get_selectabled()
@@ -106,7 +124,7 @@ class PlayScene(Scene):
                         (cell[0] + col, cell[1] + row),
                         COLORS.index(figure.color),
                     )
-                    row_counter += self.board.check_row_col((cell[0] + col, cell[1] + row))
+                    row_counter += self.board.break_row_col((cell[0] + col, cell[1] + row))
         self.score.score += figure.counter
         self.score.score += row_counter * 200
         figure.remove(self.figures.sprites)

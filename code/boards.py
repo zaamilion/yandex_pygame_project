@@ -63,22 +63,28 @@ class Board:
                     1,
                 )
 
-    def check_row_col(self, cell: tuple) -> int:
-        res = sum([self.check_row(cell),self.check_col(cell)])
+    def break_row_col(self, cell: tuple):
+        res = 0
+        if self.check_row(cell):
+            self.break_row(cell[0])
+            res += 1
+
+        if self.check_col(cell):
+            self.break_col(cell[1])
+            res += 1
+        
         return res
 
     def check_row(self, cell: tuple) -> int:
         for x in range(0, self.width):
-            if self.board[cell[0]][x] == 0:
+            if self.board[cell[0]][x] == 0 and x != cell[1]:
                 return 0
-        self.break_row(cell[0])
         return 1
 
     def check_col(self, cell: tuple) -> int:
         for y in range(0, self.height):
-            if self.board[y][cell[1]] == 0:
+            if self.board[y][cell[1]] == 0 and y != cell[0]:
                 return 0
-        self.break_col(cell[1])
         return 1
 
     def check_board_set_figure(self, figure: list) -> bool:
