@@ -41,6 +41,10 @@ class PlayScene(Scene):
     def event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.figures.get_click(event.pos)
+            click = self.board.get_click(event.pos)
+            if click:
+                self.board.set_cell(click, 2)
+                print(self.board.board)
 
         elif event.type == pygame.MOUSEMOTION:
             self.figures.motion(event.pos)

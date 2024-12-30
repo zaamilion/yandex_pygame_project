@@ -7,7 +7,8 @@ class Board:
     def __init__(self, width, height):
         self.height = height
         self.width = width
-        self.board = [[random.randint(0,1)] * width for _ in range(height)]
+        self.board = random.choice(BOARDS)
+        # self.board = [[0] * width for _ in range(height)]
         # значения по умолчанию
         self.left = 20
         self.top = 100
@@ -137,3 +138,10 @@ class FakeBoard(Board):
                             self.cell_size,
                         ),
                     )
+
+
+BOARDS = [
+    # empty
+    [[0] * 8 for _ in range(8)], 
+          # Z
+          [[0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 0, 1, 0], [0, 1, 1, 0, 0, 0, 1, 0], [0, 1, 1, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0]]]
