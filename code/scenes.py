@@ -3,7 +3,7 @@ from globals import COLORS, FIGURES_COLORS
 from boards import Board, FakeBoard
 from figures import Figures, Figure
 import animations
-
+from score import Score
 
 class Scene:
     def __init__(self, screen):
@@ -20,7 +20,7 @@ class PlayScene(Scene):
     def __init__(self, screen):
         self.screen = screen
         self.sprites = pygame.sprite.Group()
-        self.score = 0
+        self.score = Score()
         self.death = False
         self.board = Board(8, 8)
         self.fake_board = FakeBoard(8, 8)
@@ -31,6 +31,7 @@ class PlayScene(Scene):
         self.board.render(self.screen)
         self.fake_board.render(self.screen)
         self.figures.render(self.screen)
+        self.score.render(self.screen)
         if self.animation:
             self.animation = self.animation.render(self.screen)
             if self.death and not self.animation:
@@ -97,6 +98,7 @@ class PlayScene(Scene):
                 if figure.figure[row][col] == 1 and (board_cell is None or board_cell):
                     self.figures.return_to_start_pos()
                     return
+        row_counter = 0
         for row in range(figure.h):
             for col in range(figure.w):
                 if figure.figure[row][col] == 1:
@@ -104,7 +106,9 @@ class PlayScene(Scene):
                         (cell[0] + col, cell[1] + row),
                         COLORS.index(figure.color),
                     )
-                    self.board.check_row_col((cell[0] + col, cell[1] + row))
+                    row_counter += self.board.check_row_col((cell[0] + col, cell[1] + row))
+        self.score.score += figure.counter
+        self.score.score += row_counter * 200
         figure.remove(self.figures.sprites)
         self.fake_board.clear()
         if len(list(self.figures.sprites)) == 0:

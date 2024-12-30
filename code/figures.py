@@ -51,6 +51,7 @@ class Figure(pygame.sprite.Sprite):
         self.h = len(self.figure)
         self.w = len(self.figure[0])
         self.block_size = 35
+        self.counter = sum([sum(i) for i in self.figure])
         self.image = pygame.Surface((self.w * self.block_size, self.h * self.block_size), pygame.SRCALPHA, 32)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
