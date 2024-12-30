@@ -1,13 +1,14 @@
 import pygame
 from globals import COLORS
-
+import random
 
 class Board:
     # создание поля
     def __init__(self, width, height):
         self.height = height
         self.width = width
-        self.board = [[0] * width for _ in range(height)]
+        self.board = random.choice(BOARDS)
+        # self.board = [[0] * width for _ in range(height)]
         # значения по умолчанию
         self.left = 20
         self.top = 100
@@ -80,6 +81,30 @@ class Board:
         self.break_col(cell[1])
         return True
 
+    def check_board_set_figure(self, figure: list) -> bool:
+        for row in range(self.height):
+            for col in range(self.width):
+                res = self.check_cell_set_figure(
+                    (
+                        row,
+                        col,
+                    ),
+                    figure,
+                )
+                if res is True:
+                    return True
+        return False
+
+    def check_cell_set_figure(self, cell: tuple, figure: list) -> bool:
+        for y in range(len(figure)):
+            for x in range(len(figure[0])):
+                if 0 <= cell[0] + y < self.height and 0 <= cell[1] + x < self.width:
+                    if figure[y][x] == 1 and self.board[cell[0] + y][cell[1] + x] != 0:
+                        return False
+                else:
+                    return False
+        return True
+
     def break_row(self, row):
         for x in range(0, self.width):
             self.board[row][x] = 0
@@ -113,3 +138,10 @@ class FakeBoard(Board):
                             self.cell_size,
                         ),
                     )
+
+
+BOARDS = [
+    # empty
+    [[0] * 8 for _ in range(8)], 
+          # Z
+          [[0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 0, 1, 0], [0, 1, 1, 0, 0, 0, 1, 0], [0, 1, 1, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0]]]
