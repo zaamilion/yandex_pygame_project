@@ -52,7 +52,9 @@ class Figure(pygame.sprite.Sprite):
         self.w = len(self.figure[0])
         self.block_size = 35
         self.counter = sum([sum(i) for i in self.figure])
-        self.image = pygame.Surface((self.w * self.block_size, self.h * self.block_size), pygame.SRCALPHA, 32)
+        self.image = pygame.Surface(
+            (self.w * self.block_size, self.h * self.block_size), pygame.SRCALPHA, 32
+        )
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
 
@@ -66,13 +68,33 @@ class Figure(pygame.sprite.Sprite):
         self.update_img()
 
     def update_img(self):
-        self.image = pygame.Surface((self.w * self.block_size, self.h * self.block_size), pygame.SRCALPHA, 32)
+        self.image = pygame.Surface(
+            (self.w * self.block_size, self.h * self.block_size), pygame.SRCALPHA, 32
+        )
         for y in range(self.h):
             for x in range(self.w):
                 if self.figure[y][x] == 1:
-                    pygame.draw.rect(self.image, self.color, (x*self.block_size, y*self.block_size, self.block_size, self.block_size))
-                    pygame.draw.rect(self.image, self.stroke_color, (x*self.block_size, y*self.block_size, self.block_size, self.block_size), 1)
-
+                    pygame.draw.rect(
+                        self.image,
+                        self.color,
+                        (
+                            x * self.block_size,
+                            y * self.block_size,
+                            self.block_size,
+                            self.block_size,
+                        ),
+                    )
+                    pygame.draw.rect(
+                        self.image,
+                        self.stroke_color,
+                        (
+                            x * self.block_size,
+                            y * self.block_size,
+                            self.block_size,
+                            self.block_size,
+                        ),
+                        1,
+                    )
 
     def set_color(self, color: pygame.Color):
         self.color = color
@@ -111,14 +133,20 @@ class Figure(pygame.sprite.Sprite):
 
 
 FIGURES = [
-    [[1, 1, 1], [1, 1, 1], [1, 1, 1]],
-    [[0, 1], [1, 1], [1, 0]],
-    [[1, 1, 1, 1]],
-    [[0, 0, 1], [0, 0, 1], [1, 1, 1]],
-    [[1, 1, 1], [1, 0, 0], [1, 0, 0]],
-    [[1, 1], [1, 1]],
-    [[1, 0, 0], [1, 1, 1]],
-    [[1], [1], [1], [1]],
-    [[1, 1, 1], [0, 0, 1], [0, 0, 1]],
-    [[1, 0], [1, 1], [1, 0]],
+    [[1, 1]],  # 2x1 block
+    [[1, 1, 1]],  # 3x1 block
+    [[1, 1, 1, 1]],  # 4x1 block
+    [[1, 1, 1, 1, 1]],  # 5x1 block
+    [[1, 1], [1, 1]],  # 2x2 block
+    [[1, 1, 1, 1], [1, 1, 1, 1]],  # 4x2 block
+    [[1, 1, 1], [1, 1, 1], [1, 1, 1]],  # 3x3 block
+    [[1, 1, 1], [1, 0, 0], [1, 0, 0]],  # 3x3 - 2x2 block
+    [[1, 1], [1, 0]],  # 2x2 - 2x1 block
+    [[1, 1, 1], [1, 0, 0]],  # Tetris L block
+    [[1, 1, 1], [0, 0, 1]],  # Tetris J block
+    [[1, 1, 1], [0, 1, 0]],  # Tetris T block
+    [[1, 1], [0, 1], [0, 1]],  # Tetris S block
+    [[1, 1], [1, 0], [1, 0]],  # Tetris Z block
+    [[1, 0], [0, 1]],  # Diagonal 2x2 block
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1]],  # Diagonal 3x3 block
 ]
