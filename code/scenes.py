@@ -1,11 +1,13 @@
 import pygame
-from globals import COLORS, FIGURES_COLORS
+from globals import COLORS, FIGURES_COLORS, ROW_AWARD
 from boards import Board, FakeBoard
 from figures import Figures, Figure
 import animations
 from score import Score
 from copy import deepcopy
 from buttons import PlayButton
+
+
 class Scene:
     def __init__(self, screen):
         self.screen = screen
@@ -21,21 +23,31 @@ class MenuScene(Scene):
     def __init__(self, game, screen):
         self.game = game
         self.screen = screen
-        self.font = pygame.font.SysFont('Comic Sans MS', 30)
+        self.font = pygame.font.SysFont("Comic Sans MS", 30)
         self.buttons = pygame.sprite.Group()
 
-        self.play_button = PlayButton(self, self.buttons, 50, 20, (100,100), text='Play', button_color=(100,200,255, 100), border_radius=5)
+        self.play_button = PlayButton(
+            self,
+            self.buttons,
+            50,
+            20,
+            (100, 100),
+            text="Play",
+            button_color=(100, 200, 255, 100),
+            border_radius=5,
+        )
 
     def event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 self.play_button.get_click(event.pos)
-    
+
     def render(self):
         self.buttons.draw(self.screen)
 
+
 class PlayScene(Scene):
-    def __init__(self, game,screen):
+    def __init__(self, game, screen):
         self.game = game
         self.screen = screen
         self.sprites = pygame.sprite.Group()
@@ -45,6 +57,8 @@ class PlayScene(Scene):
         self.fake_board = FakeBoard(8, 8)
         self.figures = Figures()
         self.animation = None
+        self.combo_counter = 0
+        self.combo_continue = False
 
     def render(self):
         self.board.render(self.screen)
@@ -61,11 +75,11 @@ class PlayScene(Scene):
     def event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.figures.get_click(event.pos)
-            '''click = self.board.get_click(event.pos)
+            """click = self.board.get_click(event.pos)
             if click:
                 self.board.set_cell(click, 2)
-                print(self.board.board)'''
-        
+                print(self.board.board)"""
+
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.game.go_menu()
@@ -90,7 +104,7 @@ class PlayScene(Scene):
                             board_cell is None or board_cell
                         ):
                             return
-                test_board = Board(8,8)
+                test_board = Board(8, 8)
                 test_board.board = deepcopy(self.board.board)
                 for row in range(figure.h):
                     for col in range(figure.w):
@@ -107,14 +121,22 @@ class PlayScene(Scene):
                     for col in range(figure.w):
                         if test_board.check_col((cell[0] + col, cell[1] + row)):
                             for y in range(self.board.height):
-                                if test_board.get_cell((y, cell[1] + row)) != 0 and self.board.get_cell((y, cell[1] + row)) != 0:
-                                    self.board.set_cell((y, cell[1] + row), COLORS.index(figure.color))
+                                if (
+                                    test_board.get_cell((y, cell[1] + row)) != 0
+                                    and self.board.get_cell((y, cell[1] + row)) != 0
+                                ):
+                                    self.board.set_cell(
+                                        (y, cell[1] + row), COLORS.index(figure.color)
+                                    )
                         if test_board.check_row((cell[0] + col, cell[1] + row)):
                             for x in range(self.board.width):
-                                if test_board.get_cell((cell[0] + col, x)) != 0 and self.board.get_cell((cell[0] + col, x)) != 0:
-                                    self.board.set_cell((cell[0] + col, x), COLORS.index(figure.color))
-
-
+                                if (
+                                    test_board.get_cell((cell[0] + col, x)) != 0
+                                    and self.board.get_cell((cell[0] + col, x)) != 0
+                                ):
+                                    self.board.set_cell(
+                                        (cell[0] + col, x), COLORS.index(figure.color)
+                                    )
 
         elif event.type == pygame.MOUSEBUTTONUP:
             figure = self.figures.get_selectabled()
@@ -148,10 +170,19 @@ class PlayScene(Scene):
                         (cell[0] + col, cell[1] + row),
                         COLORS.index(figure.color),
                     )
-                    row_counter += self.board.break_row_col((cell[0] + col, cell[1] + row))
+                    row_counter += self.board.break_row_col(
+                        (cell[0] + col, cell[1] + row)
+                    )
         self.score.score += figure.counter
-        self.score.score += row_counter * 200
+        self.score.score += ROW_AWARD[row_counter] * (self.combo_counter + 1)
+
+        if row_counter > 0:
+            self.combo_continue = True
+            self.combo_counter += 1
         figure.remove(self.figures.sprites)
         self.fake_board.clear()
         if len(list(self.figures.sprites)) == 0:
             self.figures = Figures()
+            if self.combo_continue is False:
+                self.combo_counter = 0
+            self.combo_continue = False
